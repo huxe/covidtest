@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="appointment_payment" name="Appointment Payment">
+        <script type="text/javascript">
+
+        </script>
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="or_structure">
+                    <div class="container">
+                        Payment Screen
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="address_on_payment_custom_inherit" inherit_id="website_sale.address_on_payment">
+        <xpath expr="//div[@id='shipping_and_billing']" position="replace">
+            <t t-if="order and not event">
+                <div class="card-body" id="shipping_and_billing">
+                    <a class='float-right no-decoration' href='/shop/checkout'>
+                        <i class="fa fa-edit"/>
+                        Edit
+                    </a>
+                    <t t-set="same_shipping"
+                       t-value="bool(order.partner_shipping_id==order.partner_id or only_services)"/>
+                    <div>
+                        <b>Billing<t t-if="same_shipping and not only_services">&amp; Shipping</t>:
+                        </b>
+                        <span t-esc='order.partner_id'
+                              t-options="dict(widget='contact', fields=['address'], no_marker=True, separator=', ')"
+                              class="address-inline"/>
+                    </div>
+                    <div t-if="not same_shipping and not only_services" groups="sale.group_delivery_invoice_address">
+                        <b>Shipping:</b>
+                        <span t-esc='order.partner_shipping_id'
+                              t-options="dict(widget='contact', fields=['address'], no_marker=True, separator=', ')"
+                              class="address-inline"/>
+                    </div>
+                </div>
+            </t>
+            <t t-if="order and event">
+                <div class="card-body d-none" id="shipping_and_billing">
+                    <a class='float-right no-decoration' href='/shop/checkout'>
+                        <i class="fa fa-edit"/>
+                        Edit
+                    </a>
+                    <t t-set="same_shipping"
+                       t-value="bool(order.partner_shipping_id==order.partner_id or only_services)"/>
+                    <div>
+                        <b>Billing<t t-if="same_shipping and not only_services">&amp; Shipping</t>:
+                        </b>
+                        <span t-esc='order.partner_id'
+                              t-options="dict(widget='contact', fields=['address'], no_marker=True, separator=', ')"
+                              class="address-inline"/>
+                    </div>
+                    <div t-if="not same_shipping and not only_services" groups="sale.group_delivery_invoice_address">
+                        <b>Shipping:</b>
+                        <span t-esc='order.partner_shipping_id'
+                              t-options="dict(widget='contact', fields=['address'], no_marker=True, separator=', ')"
+                              class="address-inline"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <template id="payment_inherit" name="Payment" inherit_id="website_sale.payment">
+        <xpath expr="//div[@id='wrap']/div/div/div" position="replace">
+            <t t-if="order and event">
+                <div class='col-12 d-none'>
+                    <t t-call="website_sale.wizard_checkout">
+                        <t t-set="step" t-value="40"/>
+                    </t>
+                </div>
+            </t>
+            <t t-if="order and not event">
+                <div class='col-12'>
+                    <t t-call="website_sale.wizard_checkout">
+                        <t t-set="step" t-value="40"/>
+                    </t>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+        <template id="payment_option" name="Payment Option">
+        <t t-call="website_sale.payment"/>
+    </template>
+
+</odoo>

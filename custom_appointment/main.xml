@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="appointment_inherit_price" model="ir.ui.view">
+        <field name="name">calendar.appointment.type.form</field>
+        <field name="model">calendar.appointment.type</field>
+        <field name="inherit_id" ref="appointment.calendar_appointment_type_view_form" />
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+               <field name="country_ids" position="after">
+                   <field name="price_custom"/>
+               </field>
+        </field>
+    </record>
+
+    <template id="custom_website_change_appointment_pay" inherit_id="appointment.appointment_form">
+    <xpath expr="//div[hasclass('o_appointment_attendee_form')]/form/div[4]/div" position="replace">
+        <button type="submit" class="btn btn-primary">Process payment <span class="fa fa-arrow-right"/></button>
+    </xpath>
+    </template>
+
+    <template id="custom_website_change_appointment_validated" inherit_id="appointment.appointment_validated">
+    <xpath expr="//div[hasclass('mb-5')]" position="replace">
+        <div class="row mb-5">
+            <div class="col-md-4 text-left">
+                <a role="button" class="btn btn-block btn-primary" t-attf-href="/calendar/ics/#{event.access_token}.ics">
+                    <i class="fa fa-fw fa-arrow-right"></i>Add to iCal/Outlook
+                </a>
+            </div>
+            <div class="col-md-4 text-right">
+                <a t-if="event.appointment_type_id" role="button" class="btn btn-danger btn-block" t-attf-href="/calendar/#{event.access_token}/cancel?partner_id=#{partner_id}">
+                    <i class="fa fa-fw fa-arrow-right"></i>Add to Google Calendar
+                </a>
+            </div>
+        </div>
+    </xpath>
+    </template>
+
+
+    <template id="appointment_confirm" name="Appointment Confirm">
+        <t t-call="website.layout">
+            <div class="container">
+                <div id="wrap" class="o_website_calendar">
+                    <div class="oe_structure container mb128">
+<!--                        <h1 class="o_page_header appointment_main_title">-->
+<!--                            <span t-esc="event.name"/>-->
+<!--                            Appointment:-->
+<!--                            <span t-esc="event.doctore_id.name"/>-->
+<!--                            with-->
+<!--                            &lt;!&ndash;                        <span t-esc="event.partner_ids.name"/>&ndash;&gt;-->
+<!--                            <span t-esc="event.partner_new.name"/>-->
+<!--                        </h1>-->
+
+                        <div class="alert alert-info" t-if="message=='new'" role="status">
+                            <p>
+                                <strong>Your appointment has been successfully booked!</strong>
+                            </p>
+                        </div>
+                        <div class="alert alert-danger" t-if="message=='no-cancel'" role="alert">
+                            <p>
+                                <strong>Your appointment is in less than
+                                    <t t-esc="event.appointment_type_id.min_cancellation_hours"/>
+                                    hours from now!
+                                </strong>
+                                <br/>
+                                It's too late to cancel online, please contact the attendees another way if you really
+                                can't make it.
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-8 col-sm-10 mx-auto bg_light_grey">
+                                <div class="appointment_information">
+                                    <div class="row">
+                                        <div class="col-md-2 text-right">
+                                            <label>When:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <t t-esc="event.start" widget="datetime"/>
+                                            <br/>
+                                            <i class="text-muted">(timezone:<t t-esc="request.session.timezone"/>)
+                                            </i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 text-right">
+                                            <label>Duration:</label>
+                                        </div>
+<!--                                        <div class="col-md-10">-->
+<!--                                            <t t-esc="event.start_time"/>-->
+<!--                                            <span>-</span>-->
+<!--                                            <t t-esc="event.end_time"/>-->
+<!--                                            Hours-->
+<!--                                            &lt;!&ndash;	                                <t t-if="event.duration>=2">s</t>&ndash;&gt;-->
+<!--                                        </div>-->
+                                    </div>
+                                    <div t-if="event.location" class="row">
+                                        <div class="col-md-2 text-right">
+                                            <label>Location:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <t t-esc="event.location"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 text-right">
+                                            <label>Attendees:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <!--                                    <t t-esc="event.partner_ids.name"/>-->
+                                            <!--                                    <t t-esc="event.partner_ids.last_name"/>-->
+<!--                                            <t t-esc="event.partner_new.name"/>-->
+<!--                                            <t t-esc="event.partner_new.last_name"/>-->
+                                        </div>
+                                    </div>
+                                    <div t-if="event.description" class="row">
+                                        <div class="col-md-2 text-right">
+                                            <label>Description:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <div t-field="event.description"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
